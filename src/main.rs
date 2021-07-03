@@ -9,7 +9,7 @@ use termion::{color, style};
 const URL: &str = "https://www.vgregion.se/ov/vaccinationstider/bokningsbara-tider/";
 const MUNICIPALITIES: &[&str] = &["Ale", "Göteborg", "Kungälv", "Mölndal"];
 const MIN_SLEEP_DURATION: Duration = Duration::from_secs(50);
-const MAX_SLEEP_DURATION: Duration = Duration::from_secs(90);
+const MAX_SLEEP_DURATION: Duration = Duration::from_secs(120);
 
 #[derive(Clone, Debug)]
 struct Location {
