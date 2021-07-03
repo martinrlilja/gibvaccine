@@ -45,31 +45,32 @@ fn main() -> Result<()> {
 
         let locations = get_available()?;
 
-        let mut new_locations = vec![];
+        let mut changed_locations = vec![];
 
         for location in locations.iter() {
-            if !MUNICIPALITIES.contains(&location.municipality.as_str()) {
-                continue;
-            }
-
             current_locations
                 .entry(location.key())
                 .and_modify(|mut old_location| {
-                    if old_location.num_available < location.num_available {
-                        new_locations.push(location.clone());
+                    if old_location.num_available != location.num_available {
+                        changed_locations.push(location.clone());
                     }
                     old_location.num_available = location.num_available;
                 })
                 .or_insert_with(|| {
-                    new_locations.push(location.clone());
+                    changed_locations.push(location.clone());
                     location.clone()
                 });
         }
 
-        new_locations.sort_by_key(|location| location.num_available);
+        changed_locations.sort_by_key(|location| location.num_available);
 
-        if locations.len() > new_locations.len() {
-            let num_filtered = locations.len() - new_locations.len();
+        let filtered_locations = changed_locations
+            .iter()
+            .filter(|location| MUNICIPALITIES.contains(&location.municipality.as_str()))
+            .collect::<Vec<_>>();
+
+        if changed_locations.len() > filtered_locations.len() {
+            let num_filtered = changed_locations.len() - filtered_locations.len();
             if num_filtered == 1 {
                 println!("Filtered 1 location.");
             } else {
@@ -79,7 +80,7 @@ fn main() -> Result<()> {
 
         let mut tabwriter = TabWriter::new(std::io::stdout());
 
-        for location in new_locations.iter() {
+        for location in filtered_locations.iter() {
             writeln!(
                 tabwriter,
                 "{}{:>5}{}\t{}\t{}\t{}{}{}",
@@ -96,7 +97,7 @@ fn main() -> Result<()> {
 
         tabwriter.flush()?;
 
-        if let Some(location) = new_locations.first() {
+        if let Some(location) = filtered_locations.first() {
             if !is_first_run {
                 open::that(&location.booking_link)?;
             }
