@@ -98,7 +98,7 @@ fn main() -> Result<()> {
         tabwriter.flush()?;
 
         if let Some(location) = filtered_locations.first() {
-            if !is_first_run {
+            if !is_first_run && location.num_available > 1 {
                 open::that(&location.booking_link)?;
             }
         }
