@@ -82,7 +82,7 @@ fn main() -> Result<()> {
         for location in new_locations.iter() {
             writeln!(
                 tabwriter,
-                "{}{}{}\t{}\t{}\t{}{}{}",
+                "{}{:>5}{}\t{}\t{}\t{}{}{}",
                 style::Bold,
                 location.num_available,
                 style::Reset,
